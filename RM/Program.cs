@@ -12,7 +12,7 @@ namespace RM
             try
             {
                 DateTime date = DateTime.Parse(args[0]);
-               // DateTime date = DateTime.Parse("2021/12/21");              
+               // DateTime date = DateTime.Parse("2023/01/05");              
                 Console.WriteLine("RM reports running please wait...");
                 Balance.ReadFinancialContext(date);
                 Balance.ExportResultsTxt("0|SUCCESS");

@@ -27,10 +27,11 @@ namespace Balances
         private static NpgsqlConnection GetConn()
         {
 
-             //return new NpgsqlConnection(@"Server=10.12.77.103;Port=5432;User Id=olap;Password=0l@p;Database=olap;;Timeout=300;CommandTimeout=300;");
-            //  return new NpgsqlConnection(@"Server=10.12.77.105;Port=5432;User Id=x00549;Password=C@$$@ndr@15;Database=olap;Timeout=500;CommandTimeout=500;");
-            return new NpgsqlConnection(@"Server=10.12.77.105;Port=5432;User Id=readabrsuat;Password=P@ssw0rd;Database=olap;Timeout=500;CommandTimeout=500;");
-            // return new NpgsqlConnection(Connstr);
+            // return new NpgsqlConnection(@"Server=10.12.77.103;Port=5432;User Id=olap;Password=0l@p;Database=olap;;Timeout=300;CommandTimeout=300;");
+            //return new NpgsqlConnection(@"Server=10.12.77.105;Port=5432;User Id=x00549;Password=C@$$@ndr@15;Database=olap;Timeout=500;CommandTimeout=500;");
+            //return new NpgsqlConnection(@"Server=10.12.77.105;Port=5432;User Id=readabrsuat;Password=P@ssw0rd;Database=olap;Timeout=500;CommandTimeout=500;");
+           //return new NpgsqlConnection(@"Server=10.12.77.105;Port=5432;User Id=olap;Password=0l@p;Database=olap;Timeout=500;CommandTimeout=500;");
+             return new NpgsqlConnection(Connstr);
         }
         public static void ReadFinancialContext(DateTime date)
         {
@@ -113,8 +114,20 @@ namespace Balances
                                 }
                                 
                             }
-                                                       
-                            var cmd1 = GetFinancialFromHistorical(firstNumber, EntityVersion, con, entityId, date, financialContext, FinancialId, sourcepopulateddate, approvedDate, FlowsCommonShareCapital);
+                            DateTime ddate = Convert.ToDateTime("2023/10/10");
+                            NpgsqlCommand cmd1;
+
+                            if (appr <= ddate)
+                            {
+                                cmd1 = GetFinancialFromHistoricalOld(firstNumber, EntityVersion, con, entityId, date, financialContext, FinancialId, sourcepopulateddate, approvedDate, FlowsCommonShareCapital);
+                            }
+                            else
+                            {
+                                cmd1 = GetFinancialFromHistorical(firstNumber, EntityVersion, con, entityId, date, financialContext, FinancialId, sourcepopulateddate, approvedDate, FlowsCommonShareCapital);
+
+                            }
+                            
+                            
                             var data = new NpgsqlDataAdapter(cmd1);
                             i++;
                             try
@@ -258,27 +271,7 @@ namespace Balances
                 NpgsqlCommand command = new NpgsqlCommand(query, con);
                 var interestcoverage = command.ExecuteNonQuery();
            
-            //string query = $@"SELECT  sum( coalesce((case when originrounding = 0 then originbalance
-            //   when originrounding = 1 then originbalance * 1000
-            //when originrounding = 2 then originbalance * 100000 end),0))  as interestcoverage
-            //             FROM OLAPTS.facthiststmtbalancelatest  
-            //             where financialid::int = {Financialid} and statementid = {Statementid}
-            //                   and accountid = 3400";
-
-            //using (NpgsqlConnection connection = new NpgsqlConnection(Connstr))
-            //{
-            //    NpgsqlCommand command = new NpgsqlCommand(query, con);
-            //    var interestcoverage = command.ExecuteScalar();
-
-            //    if (interestcoverage != DBNull.Value)
-            //    {
-            //        return Convert.ToInt32(interestcoverage);
-            //    }
-            //    else
-            //    {
-            //        return 0;
-            //    }
-            //}
+            
         }
 
         private static void Finddividendspayables( NpgsqlConnection con)
@@ -291,27 +284,7 @@ namespace Balances
                 NpgsqlCommand command = new NpgsqlCommand(query, con);
                 var dividendspayable = command.ExecuteNonQuery();
 
-            //string query = $@"SELECT  sum( coalesce((case when originrounding = 0 then originbalance
-            //   when originrounding = 1 then originbalance * 1000
-            //when originrounding = 2 then originbalance * 100000 end),0))  as dividendspayables
-            //             FROM OLAPTS.facthiststmtbalancelatest  
-            //             where financialid::int = {Financialid} and statementid = {Statementid}
-            //                   and accountid in (5950,5960)";
-
-
-            //using (NpgsqlConnection connection = new NpgsqlConnection(Connstr))
-            //{
-            //    NpgsqlCommand command = new NpgsqlCommand(query, con);
-            //     var dividendspayables = command.ExecuteScalar();
-
-            //    if (dividendspayables != DBNull.Value)
-            //    {
-            //        return Convert.ToInt32(dividendspayables);
-            //    }
-            //    else
-            //    {
-            //        return 0;
-            //    }               
+                         
         }
  
         private static void FindLongTermBankingDebt( NpgsqlConnection con)
@@ -322,27 +295,7 @@ namespace Balances
                 NpgsqlCommand command = new NpgsqlCommand(query, con);
                 var LongTermBankingDebt = command.ExecuteNonQuery();
 
-            //string query = $@"SELECT  sum( coalesce((case when originrounding = 0 then originbalance
-            //   when originrounding = 1 then originbalance * 1000
-            //when originrounding = 2 then originbalance * 100000 end),0))  as LongTermBankingDebt
-            //             FROM OLAPTS.facthiststmtbalancelatest  
-            //             where financialid::int = {Financialid} and statementid = {Statementid}
-            //                   and accountid in (2100,2110,2115,2120,2130,2150)";
-
-            //using (NpgsqlConnection connection = new NpgsqlConnection(Connstr))
-            //{
-            //    NpgsqlCommand command = new NpgsqlCommand(query, con);
-            //    var LongTermBankingDebt = command.ExecuteScalar();
-
-            //    if (LongTermBankingDebt != DBNull.Value)
-            //    {
-            //        return Convert.ToInt32(LongTermBankingDebt);
-            //    }
-            //    else
-            //    {
-            //        return 0;
-            //    }
-            //}
+            
         }
 
         private static void FindShortTermBankingDebt( NpgsqlConnection con)
@@ -354,28 +307,7 @@ namespace Balances
                 NpgsqlCommand command = new NpgsqlCommand(query, con);
                 var ShortTermBankingDebt = command.ExecuteNonQuery();
            
-            //string query = $@"SELECT  sum( coalesce((case when originrounding = 0 then originbalance
-            //   when originrounding = 1 then originbalance * 1000
-            //when originrounding = 2 then originbalance * 100000 end),0))  as ShortTermBankingDebt
-            //             FROM OLAPTS.facthiststmtbalancelatest  
-            //             where financialid::int = {Financialid} and statementid = {Statementid}
-            //                   and accountid in (2400,2410,2415,2420,2430,2440,2450,2460,2470)";
-
-            //using (NpgsqlConnection connection = new NpgsqlConnection(Connstr))
-            //{
-            //    NpgsqlCommand command = new NpgsqlCommand(query, con);
-            //    var ShortTermBankingDebt = command.ExecuteScalar();
-
-
-            //    if (ShortTermBankingDebt != DBNull.Value)
-            //    {
-            //        return Convert.ToInt32(ShortTermBankingDebt);
-            //    }
-            //    else
-            //    {
-            //        return 0;
-            //    }             
-            //}
+            
         }
         
         private static void FindTotalBankingDebts( NpgsqlConnection con)
@@ -387,28 +319,7 @@ namespace Balances
                 NpgsqlCommand command = new NpgsqlCommand(query, con);
                 var totalBankingDebt = command.ExecuteNonQuery();
     
-            //string query = $@"SELECT  sum( coalesce((case when originrounding = 0 then originbalance
-            //   when originrounding = 1 then originbalance * 1000
-            //when originrounding = 2 then originbalance * 100000 end),0))  as TotalBankingDebt
-            //             FROM OLAPTS.facthiststmtbalancelatest  
-            //             where financialid::int = {Financialid} and statementid = {Statementid}
-            //                   and accountid in (2100,2110,2115,2120,2130,2150,2400,2410,2415,2420,2430,2440,2450,2460,2470)";
-
-            //using (NpgsqlConnection connection = new NpgsqlConnection(Connstr))
-            //{
-            //    NpgsqlCommand command = new NpgsqlCommand(query, con);
-            //    var TotalBankingDebt = command.ExecuteScalar();
-
-            //    if (TotalBankingDebt != DBNull.Value)
-            //    {
-            //        return Convert.ToInt32(TotalBankingDebt);
-            //    }
-            //    else
-            //    {
-            //        return 0;
-            //    }
-
-            //}  
+           
         }
 
         private static void FindInventory( NpgsqlConnection con)
@@ -439,28 +350,7 @@ namespace Balances
 
                 NpgsqlCommand command = new NpgsqlCommand(query, con);
                 var tradespayable = command.ExecuteNonQuery();
-
-            //string query = $@"SELECT  sum( coalesce((case when originrounding = 0 then originbalance
-            //   when originrounding = 1 then originbalance * 1000
-            //when originrounding = 2 then originbalance * 100000 end),0))  as inventories
-            //             FROM OLAPTS.facthiststmtbalancelatest  
-            //             where financialid::int = {Financialid} and statementid = {Statementid}
-            //                   and accountid in (2680,2685,2686,2687)";
-
-            //using (NpgsqlConnection connection = new NpgsqlConnection(Connstr))
-            //{
-            //    NpgsqlCommand command = new NpgsqlCommand(query, con);
-            //    var Tradespayable = command.ExecuteScalar();
-
-            //    if (Tradespayable != DBNull.Value)
-            //    {
-            //        return Convert.ToInt32(Tradespayable);
-            //    }
-            //    else
-            //    {
-            //        return 0;
-            //    }  
-            //}
+          
         }
 
 
@@ -673,7 +563,7 @@ namespace Balances
                         and cast(c.ApprovedDate as date) >= '2021-01-06' and cast(c.ApprovedDate as date) <= '{date.ToString("yyyy-MM-dd")}'
                         and c.financialcontext = '{FinancialContext}'
                          and c.ApprovedDate = '{approveddate}'
-                        and c.modelid = ('FA_FIN')
+                        and c.modelid in ('FA_FIN','PdModelCcategory') 
                         order by a.pkid_, a.sourcepopulateddate_ desc)x
                         union
                         select * from(
@@ -687,28 +577,11 @@ namespace Balances
                         and cast(c.ApprovedDate as date) >= '2021-01-06' and cast(c.ApprovedDate as date) <= '{date.ToString("yyyy-MM-dd")}'
                         and c.financialcontext = '{FinancialContext}'
                          and c.ApprovedDate = '{approveddate}'
-                        and c.modelid = ('FA_FIN')
+                        and c.modelid in ('FA_FIN','PdModelCcategory') 
                         order by a.pkid_, a.sourcepopulateddate_ desc)second) unionquery
                         order by unionquery.statementdatekey_ desc limit 1";
 
-
-                //query = $@"  select sumvalues-lag(sumvalues) over(order by aa.ordercolumn) as chg from(
-                //             select sum(coalesce((case when originrounding = 0 then originbalance
-                //                                       when originrounding = 1 then originbalance * 1000
-                //                                       when originrounding = 2 then originbalance * 100000 end), 0)) as sumvalues, 1 as ordercolumn
-                //             FROM OLAPTS.facthiststmtbalancelatest a
-                //             where a.financialid = '{FinancialId}' and a.statementid = {FirstStatement.ToString()}
-                //             and accountid in  (1800, 1820)
-                //             union
-                //             select sum(coalesce((case when originrounding = 0 then originbalance
-                //                                       when originrounding = 1 then originbalance * 1000
-                //                                       when originrounding = 2 then originbalance * 100000 end), 0)) , 2 as ordercolumn
-                //             FROM OLAPTS.facthiststmtbalancelatest a
-                //             where a.financialid = '{FinancialId}' and a.statementid = {SecondStatement.ToString()}
-                //             and accountid in  (1800, 1820))aa order by aa.ordercolumn desc   limit 1";
-
-
-
+                
                 decimal? value = null;
                 
                 using (NpgsqlCommand command = new NpgsqlCommand(query, con)) 
@@ -734,7 +607,7 @@ namespace Balances
             }
             catch (Exception e)
             {
-                Log.Error("GetPreviousYearChanges : \n" + e.Message + e.StackTrace + "\n" + entityid + " " + firstNumber);
+                //Log.Error("GetPreviousYearChanges : \n" + e.Message + e.StackTrace + "\n" + entityid + " " + firstNumber);
                 return null;
             }          
         }
@@ -765,14 +638,7 @@ namespace Balances
 
                 string AllFinancialIds = stringBuilder.ToString().TrimEnd(',');
 
-                //string query = $@"select distinct qq.statementid from(
-                //                  select distinct statementid ,statementdatekey_
-                //                  from olapts.factuphiststmtfinancial
-                //                  where financialid = {financialid}                
-                //                  and statementid in ({AllFinancialIds})
-                //                  order by statementdatekey_ asc)qq ";
-
-
+               
                 string query = $@"select qq.statementid from(
                                   select statementid, max(statementdatekey_)
                                   from olapts.factuphiststmtfinancial
@@ -938,17 +804,19 @@ namespace Balances
         {
             var dt = new DataTable();
             string query =
-                   $@"select distinct on (EntityId) 
+                   $@"  select distinct on (EntityId) 
                         FinancialContext  as FinancialContext,
                         EntityId  as Entityid ,
                         ApprovedDate  as ApprovedDate,
                         Updateddate_ as UpdatedDat,
                         sourcepopulateddate_ as sourcepopulateddat
-                        from olapts.factRatingScenario  
+                        from olapts.abRatingScenario  
                         where cast( ApprovedDate as date) >= '2021-01-06' and cast(ApprovedDate as date) <= '{date.ToString("yyyy-MM-dd")}'  
-                        and isdeleted_ = 'false' and IsLatestApprovedScenario = 'true'  
-                        and IsPrimary = 'true' and FinancialContext is not null and FinancialContext <> '###' and modelid = ('FA_FIN') 
-                        and FinancialContext <> '0' and FinancialContext <> '' and length(FinancialContext) > 16    and ApprovedDate is not null  order by EntityId,ApprovedDate desc";
+                        and isdeleted_ = 'false' 
+                        and IsLatestApprovedScenario::boolean
+                        and IsPrimary::boolean and FinancialContext is not null and FinancialContext <> '###' 
+                        and modelid = 'FA_FIN' 
+                        and FinancialContext <> '0' and FinancialContext <> '' and length(FinancialContext) > 16    and ApprovedDate is not null and entityid = '88394'   order by EntityId,ApprovedDate desc ";
 
            
             var cmd = new NpgsqlCommand(query, con);
@@ -1023,17 +891,18 @@ namespace Balances
                 return 0;
             }
         }
-   
-        private static NpgsqlCommand GetFinancialFromHistorical(string firstNumber, string entityVersion, NpgsqlConnection con, string entityid, DateTime date, string FinancialContext, int FinancialId, string sourcepopulateddate, string approveddate,decimal? FlowsCommonShareCapital)
-         {
-            
+
+
+        // GetFinancialFromHistoricalc
+        private static NpgsqlCommand GetFinancialFromHistoricalOld(string firstNumber, string entityVersion, NpgsqlConnection con, string entityid, DateTime date, string FinancialContext, int FinancialId, string sourcepopulateddate, string approveddate, decimal? FlowsCommonShareCapital)
+        {
 
             var query = $@"select distinct on(a.pkid_) 
-				 d.cdicode as cdi,d.gc18 as afm,coalesce(b.cashandequivalents,0.00)::numeric(19,2) as csh,coalesce(b.ebitda,0.00)::numeric(19,2) as ebitda, 
+				d.cdicode as cdi,d.gc18 as afm,coalesce(b.cashandequivalents,0.00)::numeric(19,2) as csh,coalesce(b.ebitda,0.00)::numeric(19,2) as ebitda, 
 				coalesce(b.totequityreserves,0.00)::numeric(19,2) as eqty,coalesce(b.goodwill,0.00)::numeric(19,2) as gdwill,coalesce(b.netprofit,0.00)::numeric(19,2) as nt_incm,coalesce(b.salesrevenues,0.00)::numeric(19,2) as sales_revenue,
-				 coalesce(b.NetFixedAssets,0.00)::numeric(19,2) as netfixedassets,
-				 0::numeric(19,2) as inventory ,
-				 0::numeric(19,2) as nettradereceivables,
+				coalesce(b.NetFixedAssets,0.00)::numeric(19,2) as netfixedassets,
+				0::numeric(19,2) as inventory,
+				0::numeric(19,2) as nettradereceivables,
                 coalesce(b.totalassets,0.00)::numeric(19,2) as TotalAssets,
 	            coalesce(b.commonsharecapital,0.00)::numeric(19,2) as CommonShareCapital,
 				0::numeric(19,2) as TradesPayable,
@@ -1054,35 +923,94 @@ namespace Balances
 				coalesce(b.ebitdamargin,0.00)::numeric(19,2) as EbitdaMargin,
 				0::numeric(19,2) as TotalBankingDebttoEbitda,
 				0::numeric(19,2) as NetBankingDebttoEbitda,
-                 coalesce(b.debttoequity,0.00)::numeric(19,2) as TotalLiabilitiestoTotalEquity,
-				 coalesce(b.returnonassets,0.00)::numeric(19,2) as ReturnOnAssets,
-                 coalesce(b.returnontoteqres,0.00)::numeric(19,2) as ReturnonEquity,
-                 coalesce(b.interestcoverage,0.00)::numeric(19,2) as interestcoverage,
-                 coalesce(b.currentratio,0.00)::numeric(19,2) as CurrentRatio,
-				 coalesce(b.quickratio,0.00)::numeric(19,2) as QuickRatio,
-				 a.statementyear::text as fnc_year,
-				 to_char(cast(cast(a.statementdatekey_ as varchar(15)) as date),'yyyymmdd') as publish_date,
-				 to_char(c.approveddate,'yyyymmdd') as approveddate,'20210930' as reference_date,
-	             concat_ws('|',cast(d.entityid as text),cast(d.versionid_ as text)) as entityid,{FinancialId}::int as FinancialId , {firstNumber}::int as Statementid 
-                  from olapts.factuphiststmtfinancial a
-                                 join olapts.factuphiststmtfinancialgift b on a.pkid_ = b.pkid_ and a.versionid_ = b.versionid_ 
-                                 join olapts.factratingscenario c on c.entityid   = cast(a.entityid as int)
-                                 join olapts.factentity d on d.entityid  = cast(a.entityid as int)
-                                 where a.entityid = '{entityid}' and a.financialid = '{FinancialId}' and a.statementid = '{Convert.ToInt32(firstNumber)}' 
-                                 and statementmonths = 12 
-                                 and a.sourcepopulateddate_ <= '{sourcepopulateddate}'
-                                 and cast( c.ApprovedDate as date) >= '2021-01-06' and cast(c.ApprovedDate as date) <= '{date.ToString("yyyy-MM-dd")}' 
-                                 and c.financialcontext = '{FinancialContext}'
-                                 and c.ApprovedDate = '{approveddate}' 
-                                 and d.versionid_ = '{Convert.ToInt32(entityVersion)}'
-                                 and c.modelid = ('FA_FIN')
-                                 order by a.pkid_, a.sourcepopulateddate_ desc";
+                coalesce(b.debttoequity,0.00)::numeric(19,2) as TotalLiabilitiestoTotalEquity,
+				coalesce(b.returnonassets,0.00)::numeric(19,2) as ReturnOnAssets,
+                coalesce(b.returnontoteqres,0.00)::numeric(19,2) as ReturnonEquity,
+                coalesce(b.interestcoverage,0.00)::numeric(19,2) as interestcoverage,
+                coalesce(b.currentratio,0.00)::numeric(19,2) as CurrentRatio,
+				coalesce(b.quickratio,0.00)::numeric(19,2) as QuickRatio,
+				a.statementyear::text as fnc_year,
+				to_char(cast(cast(a.statementdatekey_ as varchar(15)) as date),'yyyymmdd') as publish_date,
+				to_char(c.approveddate,'yyyymmdd') as approveddate,'20210930' as reference_date,
+	            concat_ws('|',cast(d.entityid as text),cast(d.versionid_ as text)) as entityid,{FinancialId}::int as FinancialId , {firstNumber}::int as Statementid 
+                from olapts.factuphiststmtfinancial a
+                join olapts.factuphiststmtfinancialgift b on a.pkid_ = b.pkid_ and a.versionid_ = b.versionid_ 
+                join olapts.factratingscenario c on c.entityid   = cast(a.entityid as int)
+                join olapts.factentity d on d.entityid  = cast(a.entityid as int)
+                where a.entityid = '{entityid}' and a.financialid = '{FinancialId}' and a.statementid = '{Convert.ToInt32(firstNumber)}' 
+                and statementmonths = 12 
+                and a.sourcepopulateddate_ <= '{sourcepopulateddate}'
+                and cast( c.ApprovedDate as date) >= '2021-01-06' and cast(c.ApprovedDate as date) <= '{date.ToString("yyyy-MM-dd")}' 
+                and c.financialcontext = '{FinancialContext}'
+                and c.ApprovedDate = '{approveddate}' 
+                and d.versionid_ = '{Convert.ToInt32(entityVersion)}'
+                and c.modelid in ('FA_FIN','PdModelCcategory') 
+                order by a.pkid_, a.sourcepopulateddate_ desc";
+
+            var cmd1 = new NpgsqlCommand(query, con);
+            return cmd1;
+
+        }
+
+
+
+        private static NpgsqlCommand GetFinancialFromHistorical(string firstNumber, string entityVersion, NpgsqlConnection con, string entityid, DateTime date, string FinancialContext, int FinancialId, string sourcepopulateddate, string approveddate,decimal? FlowsCommonShareCapital)
+         {
+            
+         var query = $@"select distinct on(b.pkid_) 
+				d.cdicode as cdi,d.gc18 as afm,coalesce(b.cashandequivalents,0.00)::numeric(19,2) as csh,coalesce(b.ebitda,0.00)::numeric(19,2) as ebitda, 
+				coalesce(b.totequityreserves,0.00)::numeric(19,2) as eqty,coalesce(b.goodwill,0.00)::numeric(19,2) as gdwill,coalesce(b.netprofit,0.00)::numeric(19,2) as nt_incm,coalesce(b.salesrevenues,0.00)::numeric(19,2) as sales_revenue,
+				coalesce(b.NetFixedAssets,0.00)::numeric(19,2) as netfixedassets,
+				0::numeric(19,2) as inventory,
+				0::numeric(19,2) as nettradereceivables,
+                coalesce(b.totalassets,0.00)::numeric(19,2) as TotalAssets,
+	            coalesce(b.commonsharecapital,0.00)::numeric(19,2) as CommonShareCapital,
+				0::numeric(19,2) as TradesPayable,
+                0::numeric(19,2) as TotalBankingDebt,
+				0::numeric(19,2) as ShortTermBankingDebt,
+                0::numeric(19,2) as LongTermBankingDebt,
+				coalesce(b.totalliabilities,0.00)::numeric(19,2) as TotalLiabilities,
+				coalesce(b.GrossProfit,0.00)::numeric(19,2) as GrossProfit,
+                coalesce(b.Ebit,0.00)::numeric(19,2) as Ebit,b.profitbeforetax::numeric(19,2) as ProfitBeforeTax,
+			    coalesce(b.workingcapital,0.00)::numeric(19,2) as WorkingCapital,
+                coalesce(b.dcfcffrmoperact,0.00)::numeric(19,2) as FlowsOperationalActivity,
+                coalesce(b.dcfcffrominvestact,0.00)::numeric(19,2) as FlowsInvestmentActivity,
+				coalesce(b.dcfcffromfinact,0.00)::numeric(19,2) as FlowsFinancingActivity,
+                NULLIF({FlowsCommonShareCapital},{0.0011})::numeric(19,2)  as ChgCommonShareCapital_ChgSharePremium,
+				0::numeric(19,2) as Balancedividendspayable,               
+				coalesce(b.grossprofitmargin,0.00)::numeric(19,2) as GrossProfitMargin,
+                coalesce(b.netprofitmargin,0.00)::numeric(19,2) as NetProfitMargin,
+				coalesce(b.ebitdamargin,0.00)::numeric(19,2) as EbitdaMargin,
+				0::numeric(19,2) as TotalBankingDebttoEbitda,
+				0::numeric(19,2) as NetBankingDebttoEbitda,
+                coalesce(b.debttoequity,0.00)::numeric(19,2) as TotalLiabilitiestoTotalEquity,
+				coalesce(b.returnonassets,0.00)::numeric(19,2) as ReturnOnAssets,
+                coalesce(b.returnontoteqres,0.00)::numeric(19,2) as ReturnonEquity,
+                coalesce(b.interestcoverage,0.00)::numeric(19,2) as interestcoverage,
+                coalesce(b.currentratio,0.00)::numeric(19,2) as CurrentRatio,
+				coalesce(b.quickratio,0.00)::numeric(19,2) as QuickRatio,
+				b.statementyear::text as fnc_year,
+				to_char(cast(cast(b.statementdatekey_ as varchar(15)) as date),'yyyymmdd') as publish_date,
+				to_char(c.approveddate,'yyyymmdd') as approveddate,'20210930' as reference_date,
+	            concat_ws('|',cast(d.entityid as text),cast(d.versionid_ as text)) as entityid,{FinancialId}::int as FinancialId , {firstNumber}::int as Statementid 
+                from olapts.abuphiststmtfinancials b
+                join olapts.abratingscenario c on cast(c.entityid as int) = cast(b.entityid as int)
+                join olapts.abfactentity d on cast(d.entityid as int)  = cast(b.entityid as int)
+                where b.entityid = '{entityid}' and b.financialid = '{FinancialId}' and b.statementid = '{Convert.ToInt32(firstNumber)}' 
+                and statementmonths = 12 
+                and b.sourcepopulateddate_ <= '{sourcepopulateddate}'
+                and cast( c.ApprovedDate as date) >= '2021-01-06' and cast(c.ApprovedDate as date) <= '{date.ToString("yyyy-MM-dd")}' 
+                and c.financialcontext = '{FinancialContext}'
+                and c.ApprovedDate = '{approveddate}' 
+                and d.versionid_ = '{Convert.ToInt32(entityVersion)}'
+                and c.modelid ='FA_FIN'
+                order by b.pkid_, b.sourcepopulateddate_ desc";
             
             var cmd1 = new NpgsqlCommand(query, con);
             return cmd1;
-            
+            //--join olapts.factuphiststmtfinancialgift b on a.pkid_ = b.pkid_ and a.versionid_ = b.versionid_
         }
-        
+
         private static void ExportToCsv(DataTable dataTable, string filePath, DateTime date)
         {
 
@@ -1135,7 +1063,9 @@ namespace Balances
 
         public static void ExportResultsTxt(string result)
         {
-            var path = $@"{Path}\RM_Reports_Result_{DateTime.Now.ToShortDateString().Replace("/", "-")}_{DateTime.Now.Hour.ToString()}_{DateTime.Now.Minute.ToString()}.txt";
+            // var path = $@"{Path}\RM_Reports_Result_{DateTime.Now.ToShortDateString().Replace("/", "-")}_{DateTime.Now.Hour.ToString()}_{DateTime.Now.Minute.ToString()}.txt";
+
+            var path = $@"{Path}\RMReport.bat.out";
 
             using (StreamWriter sw = (File.Exists(path) ? File.AppendText(path) : File.CreateText(path)))
             {
